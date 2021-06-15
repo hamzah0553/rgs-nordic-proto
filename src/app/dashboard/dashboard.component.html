@@ -1,4 +1,4 @@
-<mat-grid-list cols="20" rowHeight="50px">
+<mat-grid-list cols="{{gridCol}}" rowHeight="50px" (window:resize)="onResize($event)">
     <mat-grid-tile *ngFor="let tile of tiles" [colspan]="tile.colspan" [rowspan]="tile.rowspan"
         [style.background]="'lightgreen'">
         {{tile.text}}
