@@ -1,3 +1,6 @@
-<p>
-    This is dashboard for this application. We will use this to display the cells
-</p>
+<mat-grid-list cols="20" rowHeight="50px">
+    <mat-grid-tile *ngFor="let tile of tiles" [colspan]="tile.colspan" [rowspan]="tile.rowspan"
+        [style.background]="'lightgreen'">
+        {{tile.text}}
+    </mat-grid-tile>
+</mat-grid-list>
