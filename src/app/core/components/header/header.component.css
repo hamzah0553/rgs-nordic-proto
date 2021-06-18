@@ -1,0 +1,11 @@
+.flex {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+}
+
+
+.right,
+.header {
+    flex: 1;
+}

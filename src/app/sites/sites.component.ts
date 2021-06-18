@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { Site } from '../models/site';
+import { SiteApiService } from '../core/api/site-api.service';
+import { Site } from '../core/models/site';
 import { SiteService } from '../services/site.service';
 
 @Component({
@@ -8,18 +10,29 @@ import { SiteService } from '../services/site.service';
   templateUrl: './sites.component.html',
   styleUrls: ['./sites.component.css']
 })
-export class SitesComponent implements OnInit {
+export class SitesComponent implements OnInit, OnDestroy {
 
   
   public $sites: Observable<Site[]>;
 
-  constructor(private siteService: SiteService) { }
+  constructor(
+    private siteService: SiteService,
+    private siteApiService: SiteApiService, 
+    private route: Router) { }
+
+  ngOnDestroy(): void {
+  }
 
   ngOnInit(): void {
-    this.$sites = this.siteService.getSites();
-    this.siteService.getSites().subscribe(result => {
-      console.log(result);
-    })
+    this.$sites = this.siteApiService.getSites();
+  }
+
+  /**
+   * openSite
+   */
+  public openSite(site: Site) {
+    this.siteService.setCurrentSite(site); 
+    this.route.navigateByUrl(site.id + '/dashboard')
   }
 
 }

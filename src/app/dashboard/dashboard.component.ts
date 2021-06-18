@@ -1,4 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { SiteApiService } from '../core/api/site-api.service';
+import { Cell } from '../core/models/cell';
+import { Site } from '../core/models/site';
+import { SiteService } from '../services/site.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -7,46 +12,40 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DashboardComponent implements OnInit {
 
-  public tiles: Tile[] = [];
-  public gridCol = 20;
+  public currentSite: Site;
+  public gridCol;
 
-  constructor() { }
+  constructor(
+    private siteService: SiteService,
+    private siteApiService: SiteApiService, 
+    private activatedRoute: ActivatedRoute) { }
 
   ngOnInit(): void {
-    for (let index = 0; index < 200; index++) {
-      var tile = new Tile();
-      tile.colspan = 1;
-      tile.rowspan = 1;
-      tile.text = "New tile";
-      this.tiles.push(tile);
-    }
-    let innerWidth = window.innerWidth;
-    if (innerWidth < 480) {
-      this.gridCol = 10;
-    }
+    this.siteService.getCurrentSite().subscribe(currentSite => {
+      this.currentSite = currentSite; 
+      if (!this.currentSite) {
+        let siteId = this.activatedRoute.snapshot.params.id;
+        this.siteApiService.getSite(siteId).subscribe(newSite => {
+          this.siteService.setCurrentSite(newSite);
+          this.currentSite = newSite;
+        });
+      }
+    });
   }
 
-  public onResize(event) {
-    let innerWidth = event.target.innerWidth;
-    console.log(innerWidth);
-    if (768 > innerWidth) {
-      this.gridCol = 5;
-    }
-
-    if (1024 > innerWidth && innerWidth > 768) {
-      this.gridCol = 10;
-    }
-    
-    if (innerWidth > 1024) {
-      this.gridCol = 20;
+  private generateCells() {
+    if (this.currentSite.siteGridCells == null || this.currentSite.siteGridCells.length == 0) {
+      let rowCount = this.currentSite.rowCount;
+      let colCount = this.currentSite.colCount;
+      var cells = new Array<Site>(rowCount * colCount);
+      for (let i = 0; i < this.currentSite.rowCount; i++) {
+        for (let j = 0; j < this.currentSite.colCount; j++) {
+          
+          
+        }
+        
+      }
     }
   }
-
 }
 
-
-class Tile {
-  colspan: number;
-  rowspan: number;
-  text: string;
-}

@@ -1,4 +1,3 @@
-<div>
-    <p>hejsa</p>
-    <p *ngFor="let site of $sites | async">{{site.name}}</p>
+<div class="sites-container">
+    <button (click)="openSite(site)" mat-button *ngFor="let site of $sites | async">{{site.name}}</button>
 </div>

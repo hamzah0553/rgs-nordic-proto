@@ -1,6 +1,8 @@
-<mat-grid-list cols="{{gridCol}}" rowHeight="50px" (window:resize)="onResize($event)">
-    <mat-grid-tile *ngFor="let tile of tiles" [colspan]="tile.colspan" [rowspan]="tile.rowspan"
-        [style.background]="'lightgreen'">
-        {{tile.text}}
-    </mat-grid-tile>
-</mat-grid-list>
+<div class="dashboard">
+    <div class="grid">
+        <app-site-grid [site]="currentSite" *ngIf="currentSite"></app-site-grid>
+    </div>
+    <div class="cell-info">
+        <app-cell></app-cell>
+    </div>
+</div>
