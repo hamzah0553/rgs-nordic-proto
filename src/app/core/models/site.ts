@@ -5,5 +5,6 @@ export class Site {
     name: string;
     colCount: number;
     rowCount: number;
-    siteGridCells: Cell[];
+    tiles: Cell[];
+    cells: Cell[]
 }

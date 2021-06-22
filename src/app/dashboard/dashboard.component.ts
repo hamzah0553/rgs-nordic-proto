@@ -16,7 +16,9 @@ import { SiteService } from '../services/site.service';
 })
 export class DashboardComponent implements OnInit, OnDestroy {
 
+  public rowLabels = [];
   public currentSite: Site;
+  public currentCell: Cell;
   public gridCol;
   public subscription: Subscription = new Subscription;
 
@@ -33,16 +35,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     let currentSiteSub = this.siteService.getCurrentSite().subscribe(currentSite => {
-      this.currentSite = currentSite; 
+      this.currentSite = currentSite;
       if (!this.currentSite) {
         let siteId = this.activatedRoute.snapshot.params.id;
         let siteSub = this.siteApiService.getSite(siteId).subscribe(newSite => {
+          this.generateRowLabels(newSite);
+          console.log("new site", newSite);
           this.siteService.setCurrentSite(newSite);
           this.currentSite = newSite;
         });
         this.subscription.add(siteSub);
       }
     });
+    let currentCellSub = this.cellService.cellObserveable$.subscribe(cell => {
+      this.currentCell = cell;
+    })
+    this.subscription.add(currentCellSub);
     this.subscription.add(currentSiteSub);
   }
 
@@ -61,5 +69,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
     this.subscription.add(getCellSub);
   }
-}
 
+  private generateRowLabels(newSite: Site) {
+    for (let i = 0; i < newSite.rowCount; i++) {
+      this.rowLabels.push(i+1);      
+    }
+  }
+}

@@ -1,6 +1,9 @@
 <mat-grid-list cols="{{site.colCount}}" rowHeight="50px">
-    <mat-grid-tile *ngFor="let item of tiles" [colspan]="1" [rowspan]="1"
-        [style.background]="'lightgreen'">
-        <button (click)="tileClicked(item)" mat-button class="tile-btn"></button>
-    </mat-grid-tile>
+    <mat-grid-tile *ngFor="let item of colLabels">{{item}}</mat-grid-tile>
+    <div *ngFor="let item of tiles">
+        <mat-grid-tile [colspan]="1" [rowspan]="1"
+            [style.background]="'lightgreen'">
+            <button [class.occupied-cell]="checkTileColor(item)" (click)="tileClicked(item)" mat-button class="tile-btn">{{item.text}}</button>
+        </mat-grid-tile>
+    </div>
 </mat-grid-list>

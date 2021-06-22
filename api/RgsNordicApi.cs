@@ -26,15 +26,31 @@ namespace RgsNordic.Function
 
       log.LogInformation("C# HTTP trigger function processed a request.");
       List<Site> sites;
+      List<SiteDto> siteDtos;
       using (var context = new RgsNordicContext())
       {
-        sites = await context.Sites.ToListAsync();
+        sites = await context.Sites.Include(s => s.SiteGridCells).ThenInclude(sgc => sgc.Case).ToListAsync();
       }
       if (sites == null || sites.Count == 0)
       {
         return new NoContentResult();
       }
-      return new OkObjectResult(sites);
+      siteDtos = sites.Select(s => new SiteDto()
+      {
+        Id = s.Id,
+        Name = s.Name,
+        ColCount = s.ColCount,
+        RowCount = s.RowCount,
+        cells = s.SiteGridCells.Select(sc => new SiteGridCellDto()
+        {
+          Id = sc.Id,
+          SiteId = sc.SiteId,
+          Case = sc.Case == null ? null : new CaseDto() { Id = sc.Id, CaseId = sc.Case.CaseId, AmountOfWaste = sc.Case.AmountOfWaste },
+          Col = sc.Col,
+          Row = sc.Row,
+        }).ToList(),
+      }).ToList();
+      return new OkObjectResult(siteDtos);
 
     }
 
@@ -48,7 +64,7 @@ namespace RgsNordic.Function
       Site site;
       using (var context = new RgsNordicContext())
       {
-        site = await context.Sites.Include(s => s.SiteGridCells).Where(s => s.Id == Guid.Parse(id)).FirstOrDefaultAsync();
+        site = await context.Sites.Include(s => s.SiteGridCells).ThenInclude(sgc => sgc.Case).Where(s => s.Id == Guid.Parse(id)).FirstOrDefaultAsync();
       }
       if (site == null)
       {
@@ -60,7 +76,7 @@ namespace RgsNordic.Function
         Name = site.Name,
         ColCount = site.ColCount,
         RowCount = site.RowCount,
-        SiteGridCells = site.SiteGridCells.Select(sc => new SiteGridCellDto()
+        cells = site.SiteGridCells.Select(sc => new SiteGridCellDto()
         {
           Id = sc.Id,
           SiteId = sc.SiteId,
@@ -192,8 +208,23 @@ namespace RgsNordic.Function
       {
         return new BadRequestObjectResult(e);
       }
-
-      return new OkObjectResult(cell);
+      if (cell == null)
+      {
+        return new OkObjectResult(null);
+      }
+      else
+      {
+        var cellDto = new SiteGridCellDto()
+        {
+          Id = cell.Id,
+          Col = cell.Col,
+          Row = cell.Row,
+          SiteId = cell.SiteId,
+          CaseId = cell.CaseId,
+          Case = cell.Case == null ? null : new CaseDto() { Id = cell.Case.Id, CaseId = cell.Case.CaseId, AmountOfWaste = cell.Case.AmountOfWaste }
+        };
+        return new OkObjectResult(cellDto);
+      }
     }
 
     [FunctionName("PutCase")]
@@ -202,16 +233,34 @@ namespace RgsNordic.Function
       ILogger logger)
     {
       var requestBody = await new StreamReader(request.Body).ReadToEndAsync();
-      CaseDto cell = JsonConvert.DeserializeObject<CaseDto>(requestBody);
+      SiteGridCellDto cell = JsonConvert.DeserializeObject<SiteGridCellDto>(requestBody);
       try
       {
         using (var context = new RgsNordicContext())
         {
-          var newCase = await context.Cases.FindAsync(cell.Id);
-          if (true)
+          var siteCase = await context.Cases.FindAsync(cell.CaseId);
+          var existingCell = await context.SiteGridCells.FindAsync(cell.Id);
+          if (siteCase == null)
           {
-              
+            var newCase = new Case()
+            {
+              Id = Guid.NewGuid(),
+              CaseId = cell.Case.CaseId,
+              AmountOfWaste = cell.Case.AmountOfWaste
+
+            };
+            context.Cases.Add(newCase);
+            existingCell.CaseId = newCase.Id;
           }
+          else
+          {
+            siteCase.AmountOfWaste = cell.Case.AmountOfWaste;
+            siteCase.CaseId = cell.Case.CaseId;
+            context.Cases.Update(siteCase);
+            existingCell.CaseId = siteCase.Id;
+          }
+          context.SiteGridCells.Update(existingCell);
+          context.SaveChanges();
         }
       }
       catch (Exception e)
@@ -219,7 +268,7 @@ namespace RgsNordic.Function
         return new BadRequestObjectResult(e);
       }
 
-      return new OkObjectResult(cell);
+      return new OkResult();
     }
 
     [FunctionName("GetConfig")]

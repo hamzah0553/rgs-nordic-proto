@@ -1,8 +1,14 @@
 <div class="dashboard">
-    <div class="grid">
-        <app-site-grid [site]="currentSite" (tileClickEmitter)="tileClicked($event)" *ngIf="currentSite"></app-site-grid>
+    <div class="row-container">
+        <mat-grid-list cols="1" rowHeight="50px">
+            <mat-grid-tile></mat-grid-tile>
+            <mat-grid-tile *ngFor="let item of rowLabels">{{item}}</mat-grid-tile>
+        </mat-grid-list>
     </div>
-    <div class="cell-info">
+    <div class="grid">
+        <app-site-grid [site]="currentSite" [cell]="currentCell" (tileClickEmitter)="tileClicked($event)" *ngIf="currentSite"></app-site-grid>
+    </div>
+    <div *ngIf="currentCell" class="cell-info">
         <app-cell></app-cell>
     </div>
 </div>

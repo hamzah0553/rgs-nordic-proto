@@ -9,7 +9,7 @@ namespace RgsNordic.Dtos
     public string Name { get; set; }
     public int ColCount { get; set; }
     public int RowCount { get; set; }
-    public List<SiteGridCellDto> SiteGridCells { get; set; }
+    public List<SiteGridCellDto> cells { get; set; }
   }
 
 }

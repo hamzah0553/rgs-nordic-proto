@@ -4,6 +4,7 @@ import { NgModule } from "@angular/core";
 import { HttpClientModule } from '@angular/common/http';
 
 
+import { MatTableModule } from '@angular/material/table'
 import { MatButtonModule } from '@angular/material/button';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -18,24 +19,27 @@ import { SitesComponent } from './sites/sites.component';
 import { SiteGridComponent } from './site-grid/site-grid.component';
 import { CellInfoComponent } from './cell-info/cell-info.component';
 import { CellComponent } from './cell/cell.component';
+import { CharPipe } from './core/pipes/char.pipe';
 
 
 @NgModule({
   declarations: [
     AppComponent, 
     DashboardComponent, 
-    HeaderComponent, SitesComponent, SiteGridComponent, CellInfoComponent, CellComponent
+    HeaderComponent, SitesComponent, SiteGridComponent, CellInfoComponent, CellComponent, CharPipe
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    FormsModule,
     AppRoutingModule,
     HttpClientModule,
     MatSliderModule,
     MatToolbarModule,
     MatGridListModule,
     MatButtonModule,
-    MatInputModule
+    MatInputModule,
+    MatTableModule,
     
   ],
   bootstrap: [AppComponent]

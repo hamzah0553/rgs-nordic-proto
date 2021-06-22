@@ -9,7 +9,7 @@ import { environment } from 'src/environments/environment';
 })
 export class CellApiService {
 
-  apiBaseUrl = environment.api + "cell";
+  private apiBaseUrl = environment.api + "cell";
   
 
   constructor(private httpClient: HttpClient) { }

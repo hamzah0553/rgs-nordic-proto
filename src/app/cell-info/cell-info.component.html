@@ -1,20 +1,20 @@
 <div class="info-container">
-    <h1>Celle information</h1>
+    <h1>Celle info</h1>
     <div *ngIf="cell">
         <div style="margin-bottom: 1em;">
-            <span>Col: {{cell.col}}</span>
+            <span>Col: {{cell.col | char}}</span>
         </div>
         <div style="margin-bottom: 0.5em;">
-            <span>Row: {{cell.row}}</span>
+            <span>Row: {{cell.row + 1}}</span>
         </div>
         <div>
             <mat-form-field>
-                <input (keyup)="caseFieldChanged($event.target.value)" matInput type="text" placeholder="Sag">
+                <input matInput type="text" placeholder="Sag" [(ngModel)]="caseVal" (ngModelChange)="caseFieldChanged()">
             </mat-form-field>
         </div>
         <div>
             <mat-form-field>
-                <input (keyup)="wasteFieldChanged($event.target.value)" matInput type="text" placeholder="Mængde">
+                <input matInput type="text" placeholder="Mængde" [(ngModel)]="wasteVal" (ngModelChange)="wasteFieldChanged()">
             </mat-form-field>
         </div>
     </div>
