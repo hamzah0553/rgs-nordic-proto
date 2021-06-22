@@ -1,15 +1,14 @@
 using System;
 
-namespace RgsNordic.Model
+namespace RgsNordic.Dtos
 {
-  public class SiteGridCell
+  public class SiteGridCellDto
   {
     public Guid Id { get; set; }
     public Guid SiteId { get; set; }
-    public virtual Site Site { get; set; }
     public int Col { get; set; }
     public int Row { get; set; }
     public Guid? CaseId { get; set; }
-    public virtual Case Case { get; set; }
+    public CaseDto Case { get; set; }
   }
 }

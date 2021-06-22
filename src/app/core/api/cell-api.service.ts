@@ -19,10 +19,14 @@ export class CellApiService {
   }
 
   public getCell(cellId: string) {
-    return this.httpClient.get<Site>(`${this.apiBaseUrl}/${cellId}`)
+    return this.httpClient.get<Cell>(`${this.apiBaseUrl}/${cellId}`)
   }
 
   public postCell(cell: Cell) {
     return this.httpClient.post<Cell>(`${this.apiBaseUrl}`, cell);
+  }
+
+  public searchCell(cell: Cell) {
+    return this.httpClient.post<Cell>(`${this.apiBaseUrl}/search`, cell);
   }
 }

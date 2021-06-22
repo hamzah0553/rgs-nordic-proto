@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Cell } from '../core/models/cell';
 import { Site } from '../core/models/site';
 
@@ -10,20 +10,21 @@ import { Site } from '../core/models/site';
 export class SiteGridComponent implements OnInit {
 
   @Input() public site: Site = new Site();
+  @Output() tileClickEmitter = new EventEmitter<Tile>();
 
   public tiles: Tile[] = [];
 
   constructor() { }
 
   ngOnInit(): void {
-    if (this.site.siteGridCells == null || this.site.siteGridCells.length == 0) {
-      this.site.siteGridCells = new Array<Cell>(this.site.colCount * this.site.rowCount);
-      this.generateTiles();
-    }
+    //if (this.site.siteGridCells == null || this.site.siteGridCells.length == 0) {
+    //}
+    this.site.siteGridCells = new Array<Cell>(this.site.colCount * this.site.rowCount);
+    this.generateTiles();
   }
 
   tileClicked(item: Tile) {
-    console.log(item);
+    this.tileClickEmitter.emit(item);
   }
 
   private generateTiles() {
@@ -34,11 +35,8 @@ export class SiteGridComponent implements OnInit {
         tile.row = i;
         this.tiles.push(tile);
       }
-      console.log(this.tiles);
     }
-
   }
-
 }
 
 class Tile {

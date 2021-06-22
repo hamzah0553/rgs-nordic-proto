@@ -5,5 +5,6 @@ export class Cell {
     col: number;
     row: number;
     caseId: string;
+    siteId: string;
     case: Case;
 }

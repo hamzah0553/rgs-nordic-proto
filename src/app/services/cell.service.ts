@@ -10,5 +10,8 @@ export class CellService {
   private cellSubject$: BehaviorSubject<Cell> = new BehaviorSubject<Cell>(null);
   public cellObserveable$ = this.cellSubject$.asObservable();
 
-  constructor() { }
+  public setCurrentCell(cell: Cell) {
+    this.cellSubject$.next(cell);
+  }
+  
 }

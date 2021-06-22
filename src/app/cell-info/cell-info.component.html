@@ -1,18 +1,21 @@
 <div class="info-container">
     <h1>Celle information</h1>
-    <div>
-        <mat-form-field>
-            <input matInput type="text" placeholder="Celle">
-        </mat-form-field>
-    </div>
-    <div>
-        <mat-form-field>
-            <input matInput type="text" placeholder="Sag">
-        </mat-form-field>
-    </div>
-    <div>
-        <mat-form-field>
-            <input matInput type="text" placeholder="Mænde">
-        </mat-form-field>
+    <div *ngIf="cell">
+        <div style="margin-bottom: 1em;">
+            <span>Col: {{cell.col}}</span>
+        </div>
+        <div style="margin-bottom: 0.5em;">
+            <span>Row: {{cell.row}}</span>
+        </div>
+        <div>
+            <mat-form-field>
+                <input (keyup)="caseFieldChanged($event.target.value)" matInput type="text" placeholder="Sag">
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field>
+                <input (keyup)="wasteFieldChanged($event.target.value)" matInput type="text" placeholder="Mængde">
+            </mat-form-field>
+        </div>
     </div>
 </div>

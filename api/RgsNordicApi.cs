@@ -12,6 +12,7 @@ using RgsNordic.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Linq;
+using RgsNordic.Dtos;
 
 namespace RgsNordic.Function
 {
@@ -53,7 +54,22 @@ namespace RgsNordic.Function
       {
         return new NoContentResult();
       }
-      return new OkObjectResult(site);
+      var siteDto = new SiteDto()
+      {
+        Id = site.Id,
+        Name = site.Name,
+        ColCount = site.ColCount,
+        RowCount = site.RowCount,
+        SiteGridCells = site.SiteGridCells.Select(sc => new SiteGridCellDto()
+        {
+          Id = sc.Id,
+          SiteId = sc.SiteId,
+          Case = sc.Case == null ? null : new CaseDto() { Id = sc.Id, CaseId = sc.Case.CaseId, AmountOfWaste = sc.Case.AmountOfWaste },
+          Col = sc.Col,
+          Row = sc.Row,
+        }).ToList(),
+      };
+      return new OkObjectResult(siteDto);
 
     }
 
@@ -98,21 +114,30 @@ namespace RgsNordic.Function
       {
         return new NoContentResult();
       }
-      return new OkObjectResult(cells); 
+      return new OkObjectResult(cells);
     }
 
-    
+
     [FunctionName("GetCell")]
     public static async Task<IActionResult> GetCell(
     [HttpTrigger(AuthorizationLevel.Function, "get", Route = "cell/{id}")] HttpRequest req,
     ILogger log, string id)
     {
+      Guid guidId;
+      try
+      {
+        guidId = Guid.Parse(id);
+      }
+      catch (Exception)
+      {
+        return new NoContentResult();
+      }
 
       log.LogInformation("C# HTTP trigger function processed a request.");
       SiteGridCell cell;
       using (var context = new RgsNordicContext())
       {
-        cell = await context.SiteGridCells.Include(sg => sg.Case).Where(s => s.Id == Guid.Parse(id)).FirstOrDefaultAsync();
+        cell = await context.SiteGridCells.Include(sg => sg.Case).Where(s => s.Id == guidId).FirstOrDefaultAsync();
       }
       if (cell == null)
       {
@@ -130,7 +155,6 @@ namespace RgsNordic.Function
       var requestBody = await new StreamReader(request.Body).ReadToEndAsync();
       SiteGridCell cell = JsonConvert.DeserializeObject<SiteGridCell>(requestBody);
 
-
       try
       {
         using (var context = new RgsNordicContext())
@@ -143,8 +167,59 @@ namespace RgsNordic.Function
       {
         return new BadRequestObjectResult(e);
       }
-      return new OkObjectResult(cell);
 
+      return new CreatedAtActionResult(nameof(PostCell), nameof(RgsNordic), new { id = cell.Id }, cell);
+    }
+
+    [FunctionName("SearchCell")]
+    public static async Task<IActionResult> SearchCell(
+        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "cell/search")] HttpRequest request,
+        ILogger logger)
+    {
+      var requestBody = await new StreamReader(request.Body).ReadToEndAsync();
+      SiteGridCell cell = JsonConvert.DeserializeObject<SiteGridCell>(requestBody);
+
+      try
+      {
+        using (var context = new RgsNordicContext())
+        {
+          cell = await context.SiteGridCells.Include(sg => sg.Case)
+            .Where(sg => sg.Col == cell.Col && sg.Row == cell.Row && sg.SiteId == cell.SiteId)
+            .FirstOrDefaultAsync();
+        }
+      }
+      catch (Exception e)
+      {
+        return new BadRequestObjectResult(e);
+      }
+
+      return new OkObjectResult(cell);
+    }
+
+    [FunctionName("PutCase")]
+    public static async Task<IActionResult> PutCase(
+      [HttpTrigger(AuthorizationLevel.Function, "put", Route = "case")] HttpRequest request,
+      ILogger logger)
+    {
+      var requestBody = await new StreamReader(request.Body).ReadToEndAsync();
+      CaseDto cell = JsonConvert.DeserializeObject<CaseDto>(requestBody);
+      try
+      {
+        using (var context = new RgsNordicContext())
+        {
+          var newCase = await context.Cases.FindAsync(cell.Id);
+          if (true)
+          {
+              
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        return new BadRequestObjectResult(e);
+      }
+
+      return new OkObjectResult(cell);
     }
 
     [FunctionName("GetConfig")]

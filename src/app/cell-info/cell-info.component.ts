@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Cell } from '../core/models/cell';
 
 @Component({
   selector: 'app-cell-info',
@@ -7,9 +8,21 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CellInfoComponent implements OnInit {
 
+  @Input() public cell: Cell;
+  @Output() public caseEventEmitter = new EventEmitter<string>();
+  @Output() public wasteEventEmitter = new EventEmitter<string>();  
+
   constructor() { }
 
   ngOnInit(): void {
+
   }
 
+  public caseFieldChanged(value: string) {
+    this.caseEventEmitter.emit(value);
+  }
+
+  public wasteFieldChanged(value: string) {
+    this.wasteEventEmitter.emit(value);
+  }
 }
