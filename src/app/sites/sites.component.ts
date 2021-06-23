@@ -25,6 +25,7 @@ export class SitesComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.siteService.setCurrentSite(null);
+    
     this.$sites = this.siteApiService.getSites();
   }
 

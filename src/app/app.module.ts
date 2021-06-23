@@ -20,6 +20,7 @@ import { SiteGridComponent } from './site-grid/site-grid.component';
 import { CellInfoComponent } from './cell-info/cell-info.component';
 import { CellComponent } from './cell/cell.component';
 import { CharPipe } from './core/pipes/char.pipe';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 
 @NgModule({
@@ -40,6 +41,7 @@ import { CharPipe } from './core/pipes/char.pipe';
     MatButtonModule,
     MatInputModule,
     MatTableModule,
+    MatProgressSpinnerModule,
     
   ],
   bootstrap: [AppComponent]
