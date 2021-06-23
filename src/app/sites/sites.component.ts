@@ -35,6 +35,6 @@ export class SitesComponent implements OnInit, OnDestroy {
   public openSite(site: Site) {
     this.siteService.setCurrentSite(site); 
     this.route.navigateByUrl(site.id + '/dashboard')
-  }
+  } 
 
 }
